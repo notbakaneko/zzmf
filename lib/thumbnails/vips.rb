@@ -4,14 +4,17 @@ require 'vips8'
 module Thumbnails
   module Vips
     def create!(size: 900, quality: 75, **)
-      # start = Time.now
-      # Rails.logger.debug("[Size] #{size}, quality: #{quality}")
       FileUtils.mkdir_p File.dirname(full_path)
       image = setup_pipeline(size: size)
       write(image, quality)
-      # elapsed = (Time.now.to_f - start.to_f) * 1000
-      # Rails.logger.info("[Timing] #{model.id} (size: #{size}, q: #{quality}) created in #{elapsed.round(3)} ms")
+
       filename
+    end
+
+    def create(size:, quality:, **)
+      image = setup_pipeline(size: size)
+      image.write_to_buffer(ext, strip: true, Q: quality)
+      write_to_buffer(image, quality)
     end
 
     def load_factor(shrink:)
