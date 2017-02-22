@@ -30,18 +30,20 @@ module Thumbnails
 
     # rubocop:disable Metrics/AbcSize
     def setup_pipeline(size:)
-      image = open_image(filename: @in_file, shrink: 1)
+      image = open_image(filename: @in_filename, shrink: 1)
+      # image = open_buffer(@in_stream, shrink: 1)
       scale_d = d = [image.width, image.height].max
       shrink = d / size.to_f
 
       load_shrink = load_factor(shrink: shrink)
       if load_shrink > 1 && supports_shrink?(filename)
-        image = open_image(filename: @in_file, shrink: load_shrink)
+        image = open_image(filename: @in_filename, shrink: load_shrink)
+        # image = open_buffer(@in_stream, shrink: load_shrink)
         scale_d = [image.width, image.height].max
       end
 
       rscale = size.to_f / scale_d
-      $stderr.puts "scaling #{@in_file} by #{shrink}, #{load_shrink}, #{rscale}, [#{image.width}, #{image.height}]"
+      # $stderr.puts "scaling #{@in_filename} by #{shrink}, #{load_shrink}, #{rscale}, [#{image.width}, #{image.height}]"
       # image = image
       #         .tile_cache(image.width, 1, 30)
       #         .affinei_resize(:bicubic, rscale)
@@ -61,7 +63,11 @@ module Thumbnails
     private
 
     def write(image, quality)
-      image.write_to_file(full_path.to_s, Q: quality)
+      image.write_to_file(full_path.to_s, strip: true, Q: quality)
+    end
+
+    def open_buffer(buffer, shrink: 1)
+      ::Vips::Image.new_from_buffer(buffer, '', shrink: shrink, access: :sequential)
     end
 
     def thumb_open(filename, shrink = 1)
