@@ -1,0 +1,37 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    byebug (9.0.6)
+    coderay (1.1.1)
+    glib2 (3.1.1)
+      pkg-config
+    gobject-introspection (3.1.1)
+      glib2 (= 3.1.1)
+    method_source (0.8.2)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
+    pkg-config (1.1.7)
+    pry (0.10.4)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    puma (3.7.1)
+    rack (2.0.1)
+    ruby-vips8 (0.1.0)
+      gobject-introspection (~> 3.0)
+    slop (3.6.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  byebug
+  mime-types
+  pry
+  puma
+  rack
+  ruby-vips8
+
+BUNDLED WITH
+   1.13.7
