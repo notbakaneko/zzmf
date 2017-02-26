@@ -1,0 +1,37 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  TargetRubyVersion: 2.3
+  Include:
+    - '**/Rakefile'
+  Exclude:
+    - bin/bundle
+    - bin/rails
+    - bin/rake
+    - bin/rspec
+    - bin/spring
+    - 'db/migrate/*'
+    - 'db/schema.rb'
+    - 'db/seed.rb'
+    - 'vendor/bundle/**/*'
+    - 'vendor/gems/**/*'
+
+
+
+# Avoid complex methods.
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Style/SignalException:
+  # Valid values are: semantic, only_raise and only_fail
+  EnforcedStyle: only_raise
+
+Metrics/AbcSize:
+  Max: 30
+
+# Configuration parameters: AllowURI, URISchemes.
+Metrics/LineLength:
+  Max: 125
+
+Metrics/MethodLength:
+  Max: 30
