@@ -10,13 +10,23 @@ module Thumbnailer
   module FileOutput
     def call
       super
-      filename = Profiler.profile('Thumbnailer::FileOutput') do
+      output = Profiler.profile('Thumbnailer::FileOutput') do
         # signature ||= file_digest(in_filename) if Application.config.auto_signature?
         thumbnailer = Thumbnails::FromFile.new(input: in_filename, signature: signature)
         # thumbnailer.find_or_create!(force: true, **opts)
-        thumbnailer.create!(size: opts[:size], quality: opts[:q], target: :file)
+        thumbnailer.create!(size: opts[:size], quality: opts[:q], target: :file, filename: full_path.to_s)
       end
-      serve_file(File.join(Application.config.thumbnails_root_path, filename))
+      serve_file(File.join(Application.config.thumbnails_root_path, output))
+    end
+
+    private
+
+    def filename
+      "#{signature[0..1]}/#{signature}.jpg"
+    end
+
+    def full_path
+      @full_path ||= Pathname.new(Application.config.thumbnails_root_path).join(filename)
     end
   end
 

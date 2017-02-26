@@ -10,11 +10,11 @@ module Thumbnails
       send("create_to_#{target}!", size: size, quality: quality)
     end
 
-    def create_to_file!(size:, quality:)
+    def create_to_file!(filename:, size:, quality:)
       FileUtils.mkdir_p File.dirname(full_path)
-      image = setup_pipeline(size: size)
+      image = setup_pipeline(size: size, can_shrink: supports_shrink?(filename))
       Profiler.profile('write file') do
-        image.write_to_file(full_path.to_s, strip: true, Q: quality)
+        image.write_to_file(filename, strip: true, Q: quality)
       end
       filename
     end
@@ -22,7 +22,8 @@ module Thumbnails
     def create_to_buffer!(size:, quality:)
       image = setup_pipeline(size: size)
       Profiler.profile('write buffer') do
-        image.write_to_buffer(ext, strip: true, Q: quality)
+        # FIXME: not jpg
+        image.write_to_buffer('.jpg', strip: true, Q: quality)
       end
     end
 
@@ -40,14 +41,14 @@ module Thumbnails
       end
     end
 
-    def setup_pipeline(size:)
+    def setup_pipeline(size:, can_shrink: true)
       image = open_file(filename: @input, shrink: 1)
       # image = open_buffer(buffer: @in_stream, shrink: 1)
       scale_d = d = [image.width, image.height].max
       shrink = d / size.to_f
 
       load_shrink = load_factor(shrink: shrink)
-      if load_shrink > 1 && supports_shrink?(filename)
+      if load_shrink > 1 && can_shrink
         image = open_file(filename: @input, shrink: load_shrink)
         # image = open_buffer(buffer: @in_stream, shrink: load_shrink)
         scale_d = [image.width, image.height].max

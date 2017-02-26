@@ -15,39 +15,31 @@ module Thumbnails
   end
 
   class FromFile < Base
-    def find_or_create!(size: 900, q: 75, force: false)
-      if full_path.exist? && !force
-        filename
-      else
-        create!(size: size, quality: q)
-      end
+    def find_or_create!(size: 900, q: 75, force: false, **args)
+      # if full_path.exist? && !force
+      #   filename
+      # else
+        create!(size: size, quality: q, **args)
+      # end
     end
 
-    def exist?
-      full_path.exist?
-    end
+    # def exist?
+    #   full_path.exist?
+    # end
+    #
+    # def delete!
+    #   File.delete(full_path) if exist?
+    # end
 
-    def delete!
-      File.delete(full_path) if exist?
-    end
-
-    def filename
-      "#{signature[0..1]}/#{signature}.jpg"
-    end
-
-    def full_path
-      @full_path ||= Pathname.new(Application.config.thumbnails_root_path).join(filename)
-    end
-
-    private
-
-    def basename
-      File.basename(@input, '.*')
-    end
-
-    def ext
-      File.extname(@input)
-    end
+    # private
+    #
+    # def basename
+    #   File.basename(@input, '.*')
+    # end
+    #
+    # def ext
+    #   File.extname(@input)
+    # end
   end
 
   class FromBuffer < Base
