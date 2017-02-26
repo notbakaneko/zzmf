@@ -4,22 +4,20 @@ require_relative '../profiler'
 
 module Thumbnails
   module Vips
-    def create!(size: 900, quality: 75, target: :file, **)
+    def create!(size: 900, quality: 75, target: :file, **args)
       # whitelist
       raise ArgumentError, 'target must be file or buffer' unless %i(file buffer).include?(target)
-      send("create_to_#{target}!", size: size, quality: quality)
+      send("create_to_#{target}!", size: size, quality: quality, **args)
     end
 
-    def create_to_file!(filename:, size:, quality:)
-      FileUtils.mkdir_p File.dirname(full_path)
+    def create_to_file!(filename:, size:, quality:, **)
       image = setup_pipeline(size: size, can_shrink: supports_shrink?(filename))
       Profiler.profile('write file') do
         image.write_to_file(filename, strip: true, Q: quality)
       end
-      filename
     end
 
-    def create_to_buffer!(size:, quality:)
+    def create_to_buffer!(size:, quality:, **)
       image = setup_pipeline(size: size)
       Profiler.profile('write buffer') do
         # FIXME: not jpg

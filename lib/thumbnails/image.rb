@@ -5,12 +5,10 @@ module Thumbnails
 
   class Base
     include ::Thumbnails::Vips
-    attr_accessor :signature, :input
+    attr_accessor :input
 
-    def initialize(input:, signature:, **_opts)
-      raise ArgumentError, 'signature must be longer than 2 characters' unless signature && signature.length > 1
+    def initialize(input:, **_opts)
       @input = input
-      @signature = signature
     end
   end
 
