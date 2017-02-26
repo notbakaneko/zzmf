@@ -53,8 +53,8 @@ module Thumbnailer
     class Action
       attr_reader :request
 
-      def initialize(env)
-        @request = ::Rack::Request.new(env)
+      def initialize(request)
+        @request = request
       end
 
       def call
@@ -114,12 +114,24 @@ module Thumbnailer
       end
 
       def call(env)
-        Action.new(env).call
+        request = ::Rack::Request.new(env)
+        validate!(request)
+        Action.new(request).call
       rescue StandardError => e
         $stderr.puts e
         $stderr.puts e.backtrace
         headers = { 'Content-Type' => 'text/plain' }
         [500, headers, ['500 Internal Server Error']]
+      end
+
+      private
+
+      def validate!(request)
+        # rubocop:disable Metrics/LineLength, Style/NumericPredicate
+        # arbitrary
+        raise ArgumentError, 'l must be > 0 and < 10000' unless request.params['l'] && request.params['l'].to_i > 0 && request.params['l'].to_i < 10_000
+        raise ArgumentError, 'q must be >=0 and <= 100' unless request.params['q'] && request.params['q'].to_i >= 0 && request.params['q'].to_i <= 100
+        # rubocop:enable Metrics/LineLength, Style/NumericPredicate
       end
     end
   end
