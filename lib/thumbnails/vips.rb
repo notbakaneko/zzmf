@@ -26,17 +26,14 @@ module Thumbnails
     end
 
     def load_factor(shrink:)
-      if shrink >= 8
-        8
-      elsif shrink >= 4
-        4
-      elsif shrink >= 2
-        2
-      elsif shrink >= 1
-        1
-      else
-        1
-      end
+      scale = 1.5
+      factor = (shrink / scale).to_i
+      return 1 if factor <= 1
+      factor -= 1
+      factor |= factor >> 1
+      factor |= factor >> 2
+      factor += 1
+      factor >> 1
     end
 
     def setup_pipeline(size:, can_shrink: true)
