@@ -1,20 +1,23 @@
 # frozen_string_literal: true
 require 'vips8'
+require_relative '../profiler'
 
 module Thumbnails
   module Vips
     def create!(size: 900, quality: 75, **)
       FileUtils.mkdir_p File.dirname(full_path)
       image = setup_pipeline(size: size)
-      write(image, quality)
-
+      Profiler.profile('write file') do
+        write(image, quality)
+      end
       filename
     end
 
     def create(size:, quality:, **)
       image = setup_pipeline(size: size)
-      image.write_to_buffer(ext, strip: true, Q: quality)
-      write_to_buffer(image, quality)
+      Profiler.profile('write buffer') do
+        image.write_to_buffer(ext, strip: true, Q: quality)
+      end
     end
 
     def load_factor(shrink:)
@@ -53,6 +56,7 @@ module Thumbnails
 
       # image = image.conv(SHARPEN_MASK) if load_shrink > 1
       image = image.resize(rscale)
+
       image
     end
     # rubocop:enable Metrics/AbcSize
@@ -70,15 +74,15 @@ module Thumbnails
     end
 
     def open_buffer(buffer, shrink: 1)
-      ::Vips::Image.new_from_buffer(buffer, '', shrink: shrink, access: :sequential)
+      ::Vips::Image.new_from_buffer(buffer, '', shrink: shrink)
     end
 
     def thumb_open(filename, shrink = 1)
       # Rails.logger.debug("open #{filename}, shrink: #{shrink}")
       if supports_shrink?(filename)
-        ::Vips::Image.new_from_file(filename, shrink: shrink, access: :sequential)
+        ::Vips::Image.new_from_file(filename, shrink: shrink)
       else
-        ::Vips::Image.new_from_file(filename, access: :sequential)
+        ::Vips::Image.new_from_file(filename)
       end
     end
 
