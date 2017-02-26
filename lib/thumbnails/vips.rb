@@ -29,6 +29,7 @@ module Thumbnails
       scale = 1.5
       factor = (shrink / scale).to_i
       return 1 if factor <= 1
+      return 8 if factor > 8
       factor -= 1
       factor |= factor >> 1
       factor |= factor >> 2
