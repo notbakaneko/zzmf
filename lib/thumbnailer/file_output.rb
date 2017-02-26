@@ -21,7 +21,7 @@ module Thumbnailer
     private
 
     def filename
-      "#{opts[:size]}/#{signature[0..1]}/#{signature}.jpg"
+      "#{opts[:size]}/#{signature[0..1]}/#{signature}"
     end
 
     def full_path
