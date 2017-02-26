@@ -3,21 +3,18 @@
 module Thumbnails
   require_relative 'vips'
 
-  class Image
+  class Base
     include ::Thumbnails::Vips
-    attr_accessor :signature, :in_stream, :in_filename
+    attr_accessor :signature, :input
 
-    def initialize(in_filename:, in_stream: nil, signature:, **opts)
+    def initialize(input:, signature:, **_opts)
       raise ArgumentError, 'signature must be longer than 2 characters' unless signature && signature.length > 1
-      @in_stream = in_stream
-      @in_filename = in_filename
+      @input = input
       @signature = signature
     end
+  end
 
-    def exist?
-      full_path.exist?
-    end
-
+  class FromFile < Base
     def find_or_create!(size: 900, q: 75, force: false)
       if full_path.exist? && !force
         filename
@@ -26,12 +23,16 @@ module Thumbnails
       end
     end
 
+    def exist?
+      full_path.exist?
+    end
+
     def delete!
       File.delete(full_path) if exist?
     end
 
     def filename
-      "fsi/#{signature[0..1]}/#{signature}.jpg"
+      "#{signature[0..1]}/#{signature}.jpg"
     end
 
     def full_path
@@ -41,11 +42,14 @@ module Thumbnails
     private
 
     def basename
-      File.basename(@in_filename, '.*')
+      File.basename(@input, '.*')
     end
 
     def ext
-      File.extname(@in_filename)
+      File.extname(@input)
     end
+  end
+
+  class FromBuffer < Base
   end
 end

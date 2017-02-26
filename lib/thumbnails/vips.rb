@@ -4,7 +4,13 @@ require_relative '../profiler'
 
 module Thumbnails
   module Vips
-    def create!(size: 900, quality: 75, **)
+    def create!(size: 900, quality: 75, target: :file, **)
+      # whitelist
+      raise ArgumentError, 'target must be file or buffer' unless %i(file buffer).include?(target)
+      send("create_to_#{target}!", size: size, quality: quality)
+    end
+
+    def create_to_file!(size:, quality:)
       FileUtils.mkdir_p File.dirname(full_path)
       image = setup_pipeline(size: size)
       Profiler.profile('write file') do
@@ -13,7 +19,7 @@ module Thumbnails
       filename
     end
 
-    def create(size:, quality:, **)
+    def create_to_buffer!(size:, quality:)
       image = setup_pipeline(size: size)
       Profiler.profile('write buffer') do
         image.write_to_buffer(ext, strip: true, Q: quality)
@@ -35,20 +41,20 @@ module Thumbnails
     end
 
     def setup_pipeline(size:)
-      image = open_file(filename: @in_filename, shrink: 1)
+      image = open_file(filename: @input, shrink: 1)
       # image = open_buffer(buffer: @in_stream, shrink: 1)
       scale_d = d = [image.width, image.height].max
       shrink = d / size.to_f
 
       load_shrink = load_factor(shrink: shrink)
       if load_shrink > 1 && supports_shrink?(filename)
-        image = open_file(filename: @in_filename, shrink: load_shrink)
+        image = open_file(filename: @input, shrink: load_shrink)
         # image = open_buffer(buffer: @in_stream, shrink: load_shrink)
         scale_d = [image.width, image.height].max
       end
 
       rscale = size.to_f / scale_d
-      # $stderr.puts "scaling #{@in_filename} by #{shrink}, #{load_shrink}, #{rscale}, [#{image.width}, #{image.height}]"
+      # $stderr.puts "scaling #{@input} by #{shrink}, #{load_shrink}, #{rscale}, [#{image.width}, #{image.height}]"
       # image = image
       #         .tile_cache(image.width, 1, 30)
       #         .affinei_resize(:bicubic, rscale)
