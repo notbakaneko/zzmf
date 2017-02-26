@@ -8,7 +8,7 @@ module Thumbnails
       FileUtils.mkdir_p File.dirname(full_path)
       image = setup_pipeline(size: size)
       Profiler.profile('write file') do
-        write(image, quality)
+        image.write_to_file(full_path.to_s, strip: true, Q: quality)
       end
       filename
     end
@@ -34,17 +34,16 @@ module Thumbnails
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
     def setup_pipeline(size:)
-      image = open_image(filename: @in_filename, shrink: 1)
-      # image = open_buffer(@in_stream, shrink: 1)
+      image = open_file(filename: @in_filename, shrink: 1)
+      # image = open_buffer(buffer: @in_stream, shrink: 1)
       scale_d = d = [image.width, image.height].max
       shrink = d / size.to_f
 
       load_shrink = load_factor(shrink: shrink)
       if load_shrink > 1 && supports_shrink?(filename)
-        image = open_image(filename: @in_filename, shrink: load_shrink)
-        # image = open_buffer(@in_stream, shrink: load_shrink)
+        image = open_file(filename: @in_filename, shrink: load_shrink)
+        # image = open_buffer(buffer: @in_stream, shrink: load_shrink)
         scale_d = [image.width, image.height].max
       end
 
@@ -69,25 +68,16 @@ module Thumbnails
 
     private
 
-    def write(image, quality)
-      image.write_to_file(full_path.to_s, strip: true, Q: quality)
-    end
-
-    def open_buffer(buffer, shrink: 1)
+    def open_buffer(buffer:, shrink: 1)
       ::Vips::Image.new_from_buffer(buffer, '', shrink: shrink)
     end
 
-    def thumb_open(filename, shrink = 1)
-      # Rails.logger.debug("open #{filename}, shrink: #{shrink}")
+    def open_file(filename:, shrink: 1)
       if supports_shrink?(filename)
         ::Vips::Image.new_from_file(filename, shrink: shrink)
       else
         ::Vips::Image.new_from_file(filename)
       end
-    end
-
-    def open_image(filename:, shrink: 1)
-      thumb_open(filename, shrink)
     end
 
     def supports_shrink?(filename)
