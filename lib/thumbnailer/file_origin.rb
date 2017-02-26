@@ -25,10 +25,6 @@ module Thumbnailer
 
     private
 
-    def use_cached?
-      !request.params['force'] || request.params['force'].empty?
-    end
-
     def filename
       "#{signature[0..1]}/#{signature}.jpg"
     end
@@ -98,6 +94,10 @@ module Thumbnailer
 
       def signature
         request.params['signature']
+      end
+
+      def use_cached?
+        !request.params['force'] || request.params['force'].empty?
       end
 
       def file_digest(filename)
