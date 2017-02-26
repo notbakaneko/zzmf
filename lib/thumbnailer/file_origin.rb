@@ -26,7 +26,7 @@ module Thumbnailer
     private
 
     def use_cached?
-      true
+      !request.params['force'] || request.params['force'].empty?
     end
 
     def filename
