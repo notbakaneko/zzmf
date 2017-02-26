@@ -26,7 +26,7 @@ module Thumbnailer
     private
 
     def filename
-      "#{signature[0..1]}/#{signature}.jpg"
+      "#{opts[:size]}/#{signature[0..1]}/#{signature}.jpg"
     end
 
     def full_path
@@ -63,7 +63,7 @@ module Thumbnailer
         @opts ||= begin
                     hash = {}
                     hash[:q] = request.params['q'].to_i if request.params['q']
-                    hash[:size] = request.params['l'] if request.params['l']
+                    hash[:size] = request.params['l'].to_i if request.params['l']
 
                     hash
                   end
