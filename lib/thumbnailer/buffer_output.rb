@@ -6,7 +6,7 @@ module Thumbnailer
     def call
       super
       output = Profiler.profile('Thumbnailer::BufferOutput') do
-        thumbnailer = Thumbnails::FromFile.new(input: in_filename, signature: signature, scale: opts[:scale])
+        thumbnailer = Thumbnails::FromFile.new(input: in_filename, scale: opts[:scale])
         thumbnailer.create!(size: opts[:size], quality: opts[:q], target: :buffer)
       end
       serve_binary(output)
