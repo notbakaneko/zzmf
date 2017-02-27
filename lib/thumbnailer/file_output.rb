@@ -11,7 +11,6 @@ module Thumbnailer
           FileUtils.mkdir_p File.dirname(full_path)
           # signature ||= file_digest(in_filename) if Application.config.auto_signature?
           thumbnailer = Thumbnails::FromFile.new(input: in_filename, scale: opts[:scale])
-          # thumbnailer.find_or_create!(force: true, **opts)
           thumbnailer.create!(size: opts[:size], quality: opts[:q], target: :file, filename: full_path.to_s)
         end
       end
