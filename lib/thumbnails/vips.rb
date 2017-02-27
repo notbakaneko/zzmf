@@ -25,8 +25,7 @@ module Thumbnails
       end
     end
 
-    def load_factor(shrink:)
-      scale = 1.5
+    def load_factor(shrink:, scale:)
       factor = (shrink / scale).to_i
       return 1 if factor <= 1
       return 8 if factor > 8
@@ -43,7 +42,7 @@ module Thumbnails
       scale_d = d = [image.width, image.height].max
       shrink = d / size.to_f
 
-      load_shrink = load_factor(shrink: shrink)
+      load_shrink = load_factor(shrink: shrink, scale: @scale)
       if load_shrink > 1 && can_shrink
         image = open_file(filename: @input, shrink: load_shrink)
         # image = open_buffer(buffer: @in_stream, shrink: load_shrink)

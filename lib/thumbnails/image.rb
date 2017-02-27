@@ -4,11 +4,14 @@ module Thumbnails
   require_relative 'vips'
 
   class Base
+    DEFAULT_SCALE = 1.5
+
     include ::Thumbnails::Vips
     attr_accessor :input
 
-    def initialize(input:, **_opts)
+    def initialize(input:, **opts)
       @input = input
+      @scale = opts[:scale] || DEFAULT_SCALE
     end
   end
 
