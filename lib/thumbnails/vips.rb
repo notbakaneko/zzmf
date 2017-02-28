@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'vips8'
+require 'vips'
 require_relative '../profiler'
 
 module Thumbnails
