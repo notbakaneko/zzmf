@@ -29,11 +29,7 @@ module Thumbnails
       factor = (shrink / scale).to_i
       return 1 if factor <= 1
       return 8 if factor > 8
-      factor -= 1
-      factor |= factor >> 1
-      factor |= factor >> 2
-      factor += 1
-      factor >> 1
+      factor
     end
 
     def setup_pipeline(size:, can_shrink: true)
