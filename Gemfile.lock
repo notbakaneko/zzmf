@@ -3,10 +3,12 @@ GEM
   specs:
     byebug (9.0.6)
     coderay (1.1.1)
+    get_process_mem (0.2.1)
     glib2 (3.1.1)
       pkg-config
     gobject-introspection (3.1.1)
       glib2 (= 3.1.1)
+    kgio (2.11.0)
     method_source (0.8.2)
     mime-types (3.1)
       mime-types-data (~> 3.2015)
@@ -16,11 +18,17 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    puma (3.7.1)
     rack (2.0.1)
+    raindrops (0.17.0)
     ruby-vips (1.0.4)
       gobject-introspection (~> 3.1)
     slop (3.6.0)
+    unicorn (5.2.0)
+      kgio (~> 2.6)
+      raindrops (~> 0.7)
+    unicorn-worker-killer (0.4.4)
+      get_process_mem (~> 0)
+      unicorn (>= 4, < 6)
 
 PLATFORMS
   ruby
@@ -29,9 +37,13 @@ DEPENDENCIES
   byebug
   mime-types
   pry
-  puma
   rack
   ruby-vips
+  unicorn
+  unicorn-worker-killer
+
+RUBY VERSION
+   ruby 2.4.0p0
 
 BUNDLED WITH
    1.13.7
