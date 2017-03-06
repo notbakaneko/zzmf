@@ -40,8 +40,8 @@ module Thumbnailer
       def serve_binary(buffer)
         response = Rack::Response.new
         body = buffer
-        mime = MIME::Types.type_for('image/jpeg')
-        response.headers['Content-Type'] = mime.first
+        mime = MIME::Types.type_for('.jpg')
+        response.headers['Content-Type'] = mime.first.to_s
         response.write(body)
         response.finish
       end
@@ -51,7 +51,7 @@ module Thumbnailer
         response = Rack::Response.new
         body = File.binread(filename)
         mime = MIME::Types.type_for(filename)
-        response.headers['Content-Type'] = mime.first
+        response.headers['Content-Type'] = mime.first.to_s
         response.write(body)
         response.finish
       end
