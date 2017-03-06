@@ -8,8 +8,8 @@ if defined?(Unicorn)
   use Unicorn::WorkerKiller::MaxRequests, 5000, 7500, false
 
   # set to whatever you find reasonable
-  oom_min = 450 * (1024**2)
-  oom_max = 500 * (1024**2)
+  oom_min = 200 * (1024**2)
+  oom_max = 400 * (1024**2)
   # Max memory size (RSS) per worker
   use Unicorn::WorkerKiller::Oom, oom_min, oom_max
 end
