@@ -58,7 +58,6 @@ module Thumbnailer
 
       def signature
         File.basename(request.path_info)
-        # request.params['signature']
       end
 
       def use_cached?

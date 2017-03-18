@@ -9,10 +9,6 @@ module Application
     def thumbnails_root_path
       File.expand_path('~/Documents/projects/athena-thumbnailer/public')
     end
-
-    def auto_signature?
-      true
-    end
   end
 
   def self.config
