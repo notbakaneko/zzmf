@@ -16,15 +16,14 @@ end
 
 # Load App
 require_relative 'config/application'
-require_relative 'lib/thumbnailer/file_origin'
-# require_relative 'lib/thumbnailer/remote_origin'
-require_relative 'lib/request_validators/basic'
+require_relative 'lib/zzmf/thumbnailer/file_origin'
+require_relative 'lib/zzmf/request_validators/basic'
 
-require_relative 'lib/thumbnailer/file_output'
-m = Thumbnailer::FileOrigin::Action.send(:prepend, Thumbnailer::FileOutput)
-# require_relative 'lib/thumbnailer/buffer_output'
-# m = Thumbnailer::FileOrigin::Action.send(:prepend, Thumbnailer::BufferOutput)
+require_relative 'lib/zzmf/thumbnailer/file_output'
+m = Zzmf::Thumbnailer::FileOrigin::Action.send(:prepend, Zzmf::Thumbnailer::FileOutput)
+# require_relative 'lib/zzmf/thumbnailer/buffer_output'
+# m = Zzmf::Thumbnailer::FileOrigin::Action.send(:prepend, Zzmf::Thumbnailer::BufferOutput)
 
-m.send(:include, RequestValidators::Basic)
+m.send(:include, Zzmf::RequestValidators::Basic)
 
-run Thumbnailer::FileOrigin::Run.new
+run Zzmf::Thumbnailer::FileOrigin::Run.new
