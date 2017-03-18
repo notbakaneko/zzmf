@@ -3,11 +3,11 @@
 module Application
   class Config
     def root_path
-      File.expand_path('~/Pictures/i')
+      File.expand_path(ENV['ZZMV_SOURCES_PATH'] || 'sources')
     end
 
     def thumbnails_root_path
-      File.expand_path('~/Documents/projects/athena-thumbnailer/public')
+      File.expand_path(ENV['ZZMV_THUMBNAILS_PATH'] || 'thumbnails')
     end
   end
 
