@@ -5,6 +5,23 @@ require_relative '../profiler'
 module Zzmf
   module Thumbnails
     module Vips
+      module OldLibJpegScale
+        # scaling for lipjepg and libvips that only support
+        # power of 2.
+        def load_factor(shrink:, scale:)
+          factor = (shrink / scale).to_i
+          return 1 if factor <= 1
+          return 8 if factor > 8
+          factor -= 1
+          factor |= factor >> 1
+          factor |= factor >> 2
+          factor += 1
+          factor >> 1
+        end
+      end
+      # use powers of 2 only scaling unless special flag is set.
+      prepend OldLibJpegScale unless ENV['ZZMF_NEW_LIBJPEG']
+
       def create!(size: 900, quality: 75, target: :file, **args)
         # whitelist
         raise ArgumentError, 'target must be file or buffer' unless %i(file buffer).include?(target)
