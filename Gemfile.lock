@@ -10,9 +10,6 @@ GEM
       glib2 (= 3.1.1)
     kgio (2.11.0)
     method_source (0.8.2)
-    mime-types (3.1)
-      mime-types-data (~> 3.2015)
-    mime-types-data (3.2016.0521)
     pkg-config (1.1.7)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -35,7 +32,6 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
-  mime-types
   pry
   rack
   ruby-vips

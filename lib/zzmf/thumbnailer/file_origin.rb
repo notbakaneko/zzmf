@@ -2,7 +2,7 @@
 
 require 'rack'
 require 'rack/server'
-require 'mime/types'
+require_relative '../magic_number'
 require_relative '../thumbnails/image'
 require_relative '../profiler'
 
@@ -40,10 +40,9 @@ module Zzmf
 
         def serve_binary(buffer)
           response = Rack::Response.new
-          body = buffer
-          mime = MIME::Types.type_for('.jpg')
-          response.headers['Content-Type'] = mime.first.to_s
-          response.write(body)
+          mime_type = Zzmf::MagicNumber.from_string(buffer).mime_type
+          response.headers['Content-Type'] = mime_type
+          response.write(buffer)
           response.finish
         end
 
@@ -51,8 +50,8 @@ module Zzmf
           # FIXME: support SendFile
           response = Rack::Response.new
           body = File.binread(filename)
-          mime = MIME::Types.type_for(filename)
-          response.headers['Content-Type'] = mime.first.to_s
+          mime_type = Zzmf::MagicNumber.from_string(body).mime_type
+          response.headers['Content-Type'] = mime_type
           response.write(body)
           response.finish
         end

@@ -3,7 +3,7 @@ source "https://rubygems.org"
 
 ruby '>= 2.3.1'
 
-gem 'mime-types'
+# gem 'mime-types'
 gem 'pry'
 gem 'rack'
 gem 'ruby-vips'
