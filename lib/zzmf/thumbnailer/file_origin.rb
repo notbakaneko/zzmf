@@ -57,7 +57,8 @@ module Zzmf
         end
 
         def signature
-          File.basename(request.path_info)
+          # force jpg everything
+          "#{File.basename(request.path_info, '.*')}.jpg"
         end
 
         def use_cached?
