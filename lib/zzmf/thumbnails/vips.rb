@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'vips'
 require_relative '../profiler'
 
@@ -22,24 +23,24 @@ module Zzmf
       # use powers of 2 only scaling unless special flag is set.
       prepend OldLibJpegScale unless ENV['ZZMF_NEW_LIBJPEG']
 
-      def create!(size: 900, quality: 75, target: :file, **args)
+      def create!(size: 900, quality: 75, target: :file, **opts)
         # whitelist
         raise ArgumentError, 'target must be file or buffer' unless %i(file buffer).include?(target)
-        send("create_to_#{target}!", size: size, quality: quality, **args)
+        send("create_to_#{target}!", size: size, quality: quality, **opts)
       end
 
-      def create_to_file!(filename:, size:, quality:, **)
+      def create_to_file!(filename:, size:, quality:, **opts)
         image = setup_pipeline(size: size, can_shrink: supports_shrink?(filename))
         Profiler.profile('write file') do
-          image.write_to_file(filename, strip: true, Q: quality)
+          image.write_to_file(filename, Q: quality, **opts)
         end
       end
 
-      def create_to_buffer!(size:, quality:, **)
+      def create_to_buffer!(size:, quality:, **opts)
         image = setup_pipeline(size: size)
         Profiler.profile('write buffer') do
           # FIXME: not jpg
-          image.write_to_buffer('.jpg', strip: true, Q: quality)
+          image.write_to_buffer('.jpg', Q: quality, **opts)
         end
       end
 
@@ -97,7 +98,7 @@ module Zzmf
       end
 
       def supports_shrink?(filename)
-        filename.end_with?(*%w(jpg jpeg))
+        filename.end_with?(*%w(jpg jpeg)) # rubocop:disable Lint/UnneededSplatExpansion
       end
     end
   end

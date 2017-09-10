@@ -23,11 +23,20 @@ module Zzmf
           validate!(request)
         end
 
+        def create_opts
+          @create_opts ||= begin
+                             hash = {}
+                             hash[:quality] = request.params['q'].to_i if request.params['q']
+                             hash[:size] = request.params['l'].to_i if request.params['l']
+                             hash[:strip] = request.params['strip'] != '0'
+
+                             hash
+                           end
+        end
+
         def opts
           @opts ||= begin
                       hash = {}
-                      hash[:q] = request.params['q'].to_i if request.params['q']
-                      hash[:size] = request.params['l'].to_i if request.params['l']
                       hash[:scale] = request.params['s'].to_f if request.params['s']
 
                       hash

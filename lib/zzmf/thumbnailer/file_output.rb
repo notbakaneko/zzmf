@@ -12,7 +12,7 @@ module Zzmf
             FileUtils.mkdir_p File.dirname(full_path)
 
             thumbnailer = Thumbnails::FromFile.new(input: in_filename, scale: opts[:scale])
-            thumbnailer.create!(size: opts[:size], quality: opts[:q], target: :file, filename: full_path.to_s)
+            thumbnailer.create!(target: :file, filename: full_path.to_s, **create_opts)
           end
         end
         serve_file(full_path.to_s)
