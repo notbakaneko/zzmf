@@ -5,7 +5,10 @@ module Zzmf
   module Thumbnailer
     module BufferOutput
       def call
-        super
+        # FIXME
+        result = super
+        return result if result
+
         output = Profiler.profile('Thumbnailer::BufferOutput') do
           thumbnailer = Thumbnails::FromFile.new(input: in_filename, scale: opts[:scale])
           thumbnailer.create!(target: :buffer, **create_opts)

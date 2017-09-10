@@ -5,7 +5,10 @@ module Zzmf
   module Thumbnailer
     module FileOutput
       def call
-        super
+        # FIXME
+        result = super
+        return result if result
+
         raise ArgumentError, 'signature must be longer than 2 characters' unless signature && signature.length > 1
         if !use_cached? || !File.file?(full_path)
           Profiler.profile('Thumbnailer::FileOutput') do
