@@ -34,7 +34,6 @@ module Zzmf
                              profile = request.params['profile']
                              if profile && !profile.empty?
                                hash[:profile] = File.absolute_path(Zzmf::Config::Icc.profile_path(profile))
-                               hash[:strip] = false
                              end
 
                              hash

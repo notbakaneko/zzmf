@@ -31,6 +31,8 @@ module Zzmf
 
       def create_to_file!(filename:, size:, quality:, **opts)
         image = setup_pipeline(size: size, can_shrink: supports_shrink?(filename))
+        image = image.icc_transform(opts[:profile], embedded: true) if opts[:profile]
+
         Profiler.profile('write file') do
           image.write_to_file(filename, Q: quality, **opts)
         end
@@ -38,6 +40,8 @@ module Zzmf
 
       def create_to_buffer!(size:, quality:, **opts)
         image = setup_pipeline(size: size)
+        image = image.icc_transform(opts[:profile], embedded: true) if opts[:profile]
+
         Profiler.profile('write buffer') do
           # FIXME: not jpg
           image.write_to_buffer('.jpg', Q: quality, **opts)
