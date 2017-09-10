@@ -21,11 +21,17 @@ module Zzmf
       private
 
       def filename
-        "#{opts[:size]}/#{signature[0..1]}/#{signature}"
+        "#{create_opts[:size]}/#{signature[0..1]}/#{signature}"
       end
 
       def full_path
-        @full_path ||= Pathname.new(Application.config.thumbnails_root_path).join(filename)
+        @full_path ||= begin
+                         if opts[:profile]
+                           Pathname.new(Application.config.thumbnails_root_path).join(opts[:profile], filename)
+                         else
+                           Pathname.new(Application.config.thumbnails_root_path).join('default' , filename)
+                         end
+                       end
       end
     end
   end

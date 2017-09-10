@@ -44,6 +44,7 @@ module Zzmf
         def opts
           @opts ||= begin
                       hash = {}
+                      hash[:profile] = request.params['profile']
                       hash[:scale] = request.params['s'].to_f if request.params['s']
 
                       hash
