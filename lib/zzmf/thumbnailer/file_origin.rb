@@ -2,6 +2,7 @@
 
 require 'rack'
 require 'rack/server'
+require_relative '../config/icc'
 require_relative '../magic_number'
 require_relative '../thumbnails/image'
 require_relative '../profiler'
@@ -29,6 +30,12 @@ module Zzmf
                              hash[:quality] = request.params['q'].to_i if request.params['q']
                              hash[:size] = request.params['l'].to_i if request.params['l']
                              hash[:strip] = request.params['strip'] != '0'
+
+                             profile = request.params['profile']
+                             if profile && !profile.empty?
+                               hash[:profile] = File.absolute_path(Zzmf::Config::Icc.profile_path(profile))
+                               hash[:strip] = false
+                             end
 
                              hash
                            end
