@@ -32,18 +32,7 @@ module Zzmf
 
       def create_to_file!(filename:, size:, quality:, **opts)
         image = setup_pipeline(size: size, can_shrink: supports_shrink?(filename))
-        image = if opts[:profile]
-                  has_profile = image.get_typeof('icc-profile-data') != 0
-                  if has_profile
-                    image.icc_transform(
-                      opts[:profile],
-                      embedded: true,
-                      input_profile: Zzmf::Config::Icc.profile_path(:srgb)
-                    )
-                  else
-                    image.icc_export(output_profile: opts[:profile])
-                  end
-                end || image
+        image = icc_transform(image, opts)
 
         Profiler.profile('write file') do
           image.write_to_file(filename, Q: quality, **opts)
@@ -52,18 +41,7 @@ module Zzmf
 
       def create_to_buffer!(size:, quality:, **opts)
         image = setup_pipeline(size: size)
-        image = if opts[:profile]
-                  has_profile = image.get_typeof('icc-profile-data') != 0
-                  if has_profile
-                    image.icc_transform(
-                      opts[:profile],
-                      embedded: true,
-                      input_profile: Zzmf::Config::Icc.profile_path(:srgb)
-                    )
-                  else
-                    image.icc_export(output_profile: opts[:profile])
-                  end
-                end || image
+        image = icc_transform(image, opts)
 
         Profiler.profile('write buffer') do
           # FIXME: not jpg
@@ -111,6 +89,20 @@ module Zzmf
                                                   ], 24, 0).freeze
 
       private
+
+      def icc_transform(image, **opts)
+        return image unless opts[:profile]
+        has_profile = image.get_typeof('icc-profile-data') != 0
+        if has_profile
+          image.icc_transform(
+            opts[:profile],
+            embedded: true,
+            input_profile: Zzmf::Config::Icc.profile_path(:srgb)
+          )
+        else
+          image.icc_export(output_profile: opts[:profile])
+        end
+      end
 
       def open_buffer(buffer:, shrink: 1)
         ::Vips::Image.new_from_buffer(buffer, '', shrink: shrink)
