@@ -2,6 +2,7 @@
 
 require 'rack'
 require 'rack/server'
+require_relative '../config/icc'
 require_relative '../magic_number'
 require_relative '../thumbnails/image'
 require_relative '../profiler'
@@ -23,11 +24,26 @@ module Zzmf
           validate!(request)
         end
 
+        def create_opts
+          @create_opts ||= begin
+                             hash = {}
+                             hash[:quality] = request.params['q'].to_i if request.params['q']
+                             hash[:size] = request.params['l'].to_i if request.params['l']
+                             hash[:strip] = request.params['strip'] != '0'
+
+                             profile = request.params['profile']
+                             if profile && !profile.empty?
+                               hash[:profile] = File.absolute_path(Zzmf::Config::Icc.profile_path(profile))
+                             end
+
+                             hash
+                           end
+        end
+
         def opts
           @opts ||= begin
                       hash = {}
-                      hash[:q] = request.params['q'].to_i if request.params['q']
-                      hash[:size] = request.params['l'].to_i if request.params['l']
+                      hash[:profile] = request.params['profile']
                       hash[:scale] = request.params['s'].to_f if request.params['s']
 
                       hash

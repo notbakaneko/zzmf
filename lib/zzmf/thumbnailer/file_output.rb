@@ -5,14 +5,17 @@ module Zzmf
   module Thumbnailer
     module FileOutput
       def call
-        super
+        # FIXME
+        result = super
+        return result if result
+
         raise ArgumentError, 'signature must be longer than 2 characters' unless signature && signature.length > 1
         if !use_cached? || !File.file?(full_path)
           Profiler.profile('Thumbnailer::FileOutput') do
             FileUtils.mkdir_p File.dirname(full_path)
 
             thumbnailer = Thumbnails::FromFile.new(input: in_filename, scale: opts[:scale])
-            thumbnailer.create!(size: opts[:size], quality: opts[:q], target: :file, filename: full_path.to_s)
+            thumbnailer.create!(target: :file, filename: full_path.to_s, **create_opts)
           end
         end
         serve_file(full_path.to_s)
@@ -21,11 +24,17 @@ module Zzmf
       private
 
       def filename
-        "#{opts[:size]}/#{signature[0..1]}/#{signature}"
+        "#{create_opts[:size]}/#{signature[0..1]}/#{signature}"
       end
 
       def full_path
-        @full_path ||= Pathname.new(Application.config.thumbnails_root_path).join(filename)
+        @full_path ||= begin
+                         if opts[:profile]
+                           Pathname.new(Application.config.thumbnails_root_path).join(opts[:profile], filename)
+                         else
+                           Pathname.new(Application.config.thumbnails_root_path).join('default', filename)
+                         end
+                       end
       end
     end
   end
