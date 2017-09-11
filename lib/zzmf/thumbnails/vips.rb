@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'vips'
+require_relative '../config/icc'
 require_relative '../profiler'
 
 module Zzmf
@@ -31,7 +32,18 @@ module Zzmf
 
       def create_to_file!(filename:, size:, quality:, **opts)
         image = setup_pipeline(size: size, can_shrink: supports_shrink?(filename))
-        image = image.icc_transform(opts[:profile], embedded: true) if opts[:profile]
+        image = if opts[:profile]
+                  has_profile = image.get_typeof('icc-profile-data') != 0
+                  if has_profile
+                    image.icc_transform(
+                      opts[:profile],
+                      embedded: true,
+                      input_profile: Zzmf::Config::Icc.profile_path(:srgb)
+                    )
+                  else
+                    image.icc_export(output_profile: opts[:profile])
+                  end
+                end || image
 
         Profiler.profile('write file') do
           image.write_to_file(filename, Q: quality, **opts)
@@ -40,7 +52,18 @@ module Zzmf
 
       def create_to_buffer!(size:, quality:, **opts)
         image = setup_pipeline(size: size)
-        image = image.icc_transform(opts[:profile], embedded: true) if opts[:profile]
+        image = if opts[:profile]
+                  has_profile = image.get_typeof('icc-profile-data') != 0
+                  if has_profile
+                    image.icc_transform(
+                      opts[:profile],
+                      embedded: true,
+                      input_profile: Zzmf::Config::Icc.profile_path(:srgb)
+                    )
+                  else
+                    image.icc_export(output_profile: opts[:profile])
+                  end
+                end || image
 
         Profiler.profile('write buffer') do
           # FIXME: not jpg
