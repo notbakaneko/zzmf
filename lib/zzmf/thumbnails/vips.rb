@@ -92,16 +92,12 @@ module Zzmf
 
       def icc_transform(image, **opts)
         return image unless opts[:profile]
-        has_profile = image.get_typeof('icc-profile-data') != 0
-        if has_profile
-          image.icc_transform(
-            opts[:profile],
-            embedded: true,
-            input_profile: Zzmf::Config::Icc.profile_path(:srgb)
-          )
-        else
-          image.icc_export(output_profile: opts[:profile])
-        end
+        return image if image.get_typeof('icc-profile-data') == 0
+
+        image.icc_transform(
+          opts[:profile],
+          embedded: true
+        )
       end
 
       def open_buffer(buffer:, shrink: 1)
