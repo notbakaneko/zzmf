@@ -32,7 +32,7 @@ module Zzmf
                          if opts[:profile]
                            Pathname.new(Application.config.thumbnails_root_path).join(opts[:profile], filename)
                          else
-                           Pathname.new(Application.config.thumbnails_root_path).join('default' , filename)
+                           Pathname.new(Application.config.thumbnails_root_path).join('default', filename)
                          end
                        end
       end
