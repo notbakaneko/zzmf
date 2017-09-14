@@ -9,9 +9,7 @@ gem 'rack'
 gem 'ruby-vips'
 
 # App server
-# gem 'puma'
-gem 'unicorn'
-gem 'unicorn-worker-killer'
+gem 'puma'
 
 group :development do
   gem 'byebug'
