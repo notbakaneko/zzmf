@@ -10,6 +10,7 @@ gem 'ruby-vips'
 
 # App server
 gem 'puma'
+gem 'puma_worker_killer'
 
 group :development do
   # gem 'byebug'
