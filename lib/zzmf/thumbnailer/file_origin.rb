@@ -102,8 +102,6 @@ module Zzmf
           $stderr.puts e.backtrace
           headers = { 'Content-Type' => 'text/plain' }
           [500, headers, ['500 Internal Server Error']]
-        # ensure
-        #   GC.start(full_mark: false, immediate_sweep: false)
         end
       end
     end
