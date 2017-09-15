@@ -56,8 +56,11 @@ module Zzmf
         factor
       end
 
-      def setup_pipeline(size:, can_shrink: true)
+      def setup_pipeline(size:, can_shrink: true, upscale: false)
         image = open_file(filename: @input, shrink: 1)
+
+        return image unless upscale || ([image.width, image.height].max > size)
+
         # image = open_buffer(buffer: @in_stream, shrink: 1)
         scale_d = d = [image.width, image.height].max
         shrink = d / size.to_f
