@@ -14,7 +14,7 @@ module Zzmf
           Profiler.profile('Thumbnailer::FileOutput') do
             FileUtils.mkdir_p File.dirname(full_path)
 
-            thumbnailer = Thumbnails::FromFile.new(input: in_filename, scale: opts[:scale])
+            thumbnailer = Thumbnails::FromFile.new(input: in_filename, **opts)
             thumbnailer.create!(target: :file, filename: full_path.to_s, **create_opts)
           end
         end
