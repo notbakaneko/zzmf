@@ -45,6 +45,7 @@ module Zzmf
                       hash = {}
                       hash[:profile] = request.params['profile']
                       hash[:scale] = request.params['s'].to_f if request.params['s']
+                      hash[:upscale] = request.params['u'] == '1'
 
                       hash
                     end

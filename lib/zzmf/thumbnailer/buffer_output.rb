@@ -10,7 +10,7 @@ module Zzmf
         return result if result
 
         output = Profiler.profile('Thumbnailer::BufferOutput') do
-          thumbnailer = Thumbnails::FromFile.new(input: in_filename, scale: opts[:scale])
+          thumbnailer = Thumbnails::FromFile.new(input: in_filename, **opts)
           thumbnailer.create!(target: :buffer, **create_opts)
         end
         serve_binary(output)

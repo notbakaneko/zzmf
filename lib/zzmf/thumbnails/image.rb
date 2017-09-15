@@ -13,6 +13,7 @@ module Zzmf
       def initialize(input:, **opts)
         @input = input
         @scale = opts[:scale] || DEFAULT_SCALE
+        @upscale = opts[:upscale] || false
       end
     end
 
