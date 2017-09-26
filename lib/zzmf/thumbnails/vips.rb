@@ -32,6 +32,8 @@ module Zzmf
 
       def create_to_file!(filename:, size:, quality:, **opts)
         image = setup_pipeline(size: size, can_shrink: supports_shrink?(filename))
+        opts.delete(:profile) if image.get_typeof('icc-profile-data') == 0
+
         image = icc_transform(image, opts)
 
         Profiler.profile('write file') do
@@ -41,6 +43,8 @@ module Zzmf
 
       def create_to_buffer!(size:, quality:, **opts)
         image = setup_pipeline(size: size)
+        opts.delete(:profile) if image.get_typeof('icc-profile-data') == 0
+
         image = icc_transform(image, opts)
 
         Profiler.profile('write buffer') do
@@ -95,7 +99,6 @@ module Zzmf
 
       def icc_transform(image, **opts)
         return image unless opts[:profile]
-        return image if image.get_typeof('icc-profile-data') == 0
 
         image.icc_transform(
           opts[:profile],
