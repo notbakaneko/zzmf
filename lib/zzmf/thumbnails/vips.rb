@@ -66,23 +66,26 @@ module Zzmf
         return image unless @upscale || ([image.width, image.height].max > size)
 
         # image = open_buffer(buffer: @in_stream, shrink: 1)
-        scale_d = d = [image.width, image.height].max
+        scale_d = d = if @fit == :cover
+                        [image.width, image.height].min
+                      else
+                        [image.width, image.height].max
+                      end
         shrink = d / size.to_f
 
         load_shrink = load_factor(shrink: shrink, scale: @scale)
         if load_shrink > 1 && can_shrink
           image = open_file(filename: @input, shrink: load_shrink)
           # image = open_buffer(buffer: @in_stream, shrink: load_shrink)
-          scale_d = [image.width, image.height].max
+          scale_d = if @fit == :cover
+                      [image.width, image.height].min
+                    else
+                      [image.width, image.height].max
+                    end
         end
 
         rscale = size.to_f / scale_d
         # $stderr.puts "scaling #{@input} by #{shrink}, #{load_shrink}, #{rscale}, [#{image.width}, #{image.height}]"
-        # image = image
-        #         .tile_cache(image.width, 1, 30)
-        #         .affinei_resize(:bicubic, rscale)
-
-        # image = image.conv(SHARPEN_MASK) if load_shrink > 1
         image = image.resize(rscale)
 
         image
