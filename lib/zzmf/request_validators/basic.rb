@@ -10,15 +10,15 @@ module Zzmf
         if request.params['w'] || request.params['h']
           raise ArgumentError, 'w must be > 0 and < 10000' unless request.params['w'] &&
                                                                   request.params['w'].to_i > 0 &&
-                                                                  request.params['w'].to_i < 10_000
+                                                                  request.params['w'].to_i < 25_000
 
           raise ArgumentError, 'h must be > 0 and < 10000' unless request.params['h'] &&
                                                                   request.params['h'].to_i > 0 &&
-                                                                  request.params['h'].to_i < 10_000
+                                                                  request.params['h'].to_i < 25_000
         else
           raise ArgumentError, 'l must be > 0 and < 10000' unless request.params['l'] &&
                                                                   request.params['l'].to_i > 0 &&
-                                                                  request.params['l'].to_i < 10_000
+                                                                  request.params['l'].to_i < 25_000
         end
         raise ArgumentError, 'q must be >=0 and <= 100' unless request.params['q'] &&
                                                                request.params['q'].to_i >= 0 &&
