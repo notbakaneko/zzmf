@@ -61,29 +61,20 @@ module Zzmf
       end
 
       def setup_pipeline(width:, height:, can_shrink: true)
-        size = [width, height].max
-
         image = open_file(filename: @input, shrink: 1)
+        size = size_cap(image, width, height)
 
         return image unless @upscale || ([image.width, image.height].max > size)
 
         # image = open_buffer(buffer: @in_stream, shrink: 1)
-        scale_d = d = if @fit == :cover
-                        [image.width, image.height].min
-                      else
-                        [image.width, image.height].max
-                      end
+        scale_d = d = [image.width, image.height].max
         shrink = d / size.to_f
 
         load_shrink = load_factor(shrink: shrink, scale: @scale)
         if load_shrink > 1 && can_shrink
           image = open_file(filename: @input, shrink: load_shrink)
           # image = open_buffer(buffer: @in_stream, shrink: load_shrink)
-          scale_d = if @fit == :cover
-                      [image.width, image.height].min
-                    else
-                      [image.width, image.height].max
-                    end
+          scale_d = [image.width, image.height].max
         end
 
         rscale = size.to_f / scale_d
@@ -109,6 +100,16 @@ module Zzmf
           opts[:profile],
           embedded: true
         )
+      end
+
+      def size_cap(image, width, height)
+        scale = [image.width.to_f / width, image.height.to_f / height].max
+        puts scale
+        [image.width.to_f / scale, image.height.to_f / scale].max
+      end
+
+      def aspect_ratio(width, height)
+        width.to_f / height.to_f
       end
 
       def open_buffer(buffer:, shrink: 1)
