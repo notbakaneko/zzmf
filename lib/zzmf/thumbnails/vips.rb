@@ -24,14 +24,14 @@ module Zzmf
       # use powers of 2 only scaling unless special flag is set.
       prepend OldLibJpegScale unless ENV['ZZMF_NEW_LIBJPEG']
 
-      def create!(size: 900, quality: 75, target: :file, **opts)
+      def create!(width:, height:, quality: 75, target: :file, **opts)
         # whitelist
         raise ArgumentError, 'target must be file or buffer' unless %i(file buffer).include?(target)
-        send("create_to_#{target}!", size: size, quality: quality, **opts)
+        send("create_to_#{target}!", width: width, height: height, quality: quality, **opts)
       end
 
-      def create_to_file!(filename:, size:, quality:, **opts)
-        image = setup_pipeline(size: size, can_shrink: supports_shrink?(filename))
+      def create_to_file!(filename:, width:, height:, quality:, **opts)
+        image = setup_pipeline(width: width, height: height, can_shrink: supports_shrink?(filename))
         opts.delete(:profile) if image.get_typeof('icc-profile-data') == 0
 
         image = icc_transform(image, opts)
@@ -41,8 +41,8 @@ module Zzmf
         end
       end
 
-      def create_to_buffer!(size:, quality:, **opts)
-        image = setup_pipeline(size: size)
+      def create_to_buffer!(width:, height:, quality:, **opts)
+        image = setup_pipeline(width: width, height: height)
         opts.delete(:profile) if image.get_typeof('icc-profile-data') == 0
 
         image = icc_transform(image, opts)
@@ -60,8 +60,9 @@ module Zzmf
         factor
       end
 
-      def setup_pipeline(size:, can_shrink: true)
+      def setup_pipeline(width:, height:, can_shrink: true)
         image = open_file(filename: @input, shrink: 1)
+        size = size_cap(image, width, height)
 
         return image unless @upscale || ([image.width, image.height].max > size)
 
@@ -78,11 +79,6 @@ module Zzmf
 
         rscale = size.to_f / scale_d
         # $stderr.puts "scaling #{@input} by #{shrink}, #{load_shrink}, #{rscale}, [#{image.width}, #{image.height}]"
-        # image = image
-        #         .tile_cache(image.width, 1, 30)
-        #         .affinei_resize(:bicubic, rscale)
-
-        # image = image.conv(SHARPEN_MASK) if load_shrink > 1
         image = image.resize(rscale)
 
         image
@@ -104,6 +100,16 @@ module Zzmf
           opts[:profile],
           embedded: true
         )
+      end
+
+      def size_cap(image, width, height)
+        scale = [image.width.to_f / width, image.height.to_f / height].max
+        puts scale
+        [image.width.to_f / scale, image.height.to_f / scale].max
+      end
+
+      def aspect_ratio(width, height)
+        width.to_f / height.to_f
       end
 
       def open_buffer(buffer:, shrink: 1)

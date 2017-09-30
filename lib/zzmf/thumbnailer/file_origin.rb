@@ -28,7 +28,13 @@ module Zzmf
           @create_opts ||= begin
                              hash = {}
                              hash[:quality] = request.params['q'].to_i if request.params['q']
-                             hash[:size] = request.params['l'].to_i if request.params['l']
+                             if request.params['l']
+                               hash[:size] = hash[:width] = hash[:height] = request.params['l'].to_i
+                             else
+                               hash[:width] = request.params['w'].to_i
+                               hash[:height] = request.params['h'].to_i
+                             end
+
                              hash[:strip] = request.params['strip'] != '0'
 
                              profile = request.params['profile']

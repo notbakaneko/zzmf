@@ -14,6 +14,7 @@ module Zzmf
         @input = input
         @scale = opts[:scale] || DEFAULT_SCALE
         @upscale = opts[:upscale] || false
+        @fit = opts[:fit]&.to_sym
       end
     end
 
