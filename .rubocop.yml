@@ -22,6 +22,10 @@ AllCops:
 Metrics/CyclomaticComplexity:
   Enabled: false
 
+Style/NumericPredicate:
+  Enabled: false
+
+
 Style/SignalException:
   # Valid values are: semantic, only_raise and only_fail
   EnforcedStyle: only_raise
