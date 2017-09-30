@@ -104,7 +104,6 @@ module Zzmf
 
       def size_cap(image, width, height)
         scale = [image.width.to_f / width, image.height.to_f / height].max
-        puts scale
         [image.width.to_f / scale, image.height.to_f / scale].max
       end
 
