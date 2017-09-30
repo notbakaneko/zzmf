@@ -29,7 +29,7 @@ module Zzmf
                              hash = {}
                              hash[:quality] = request.params['q'].to_i if request.params['q']
                              if request.params['l']
-                               hash[:size] = hash[:width] = hash[:height] = request.params['l'].to_i
+                               hash[:width] = hash[:height] = request.params['l'].to_i
                              else
                                hash[:width] = request.params['w'].to_i
                                hash[:height] = request.params['h'].to_i
