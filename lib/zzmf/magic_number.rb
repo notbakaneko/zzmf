@@ -20,13 +20,16 @@ module Zzmf
     end
 
     def mime_type
-      @mime_type ||= case partial[0..1].unpack('H*').first
-                     when 'ffd8'
-                       'image/jpeg'
-                     when '47494638'
-                       'image/gif'
-                     when '89504e47'
-                       'image/png'
+      @mime_type ||= begin
+                       unpack = partial[0..3].unpack('H*').first
+                       return 'image/jpeg' if unpack[0..3] == 'ffd8'
+
+                       case unpack
+                       when '47494638'
+                         'image/gif'
+                       when '89504e47'
+                         'image/png'
+                       end
                      end
     end
 
