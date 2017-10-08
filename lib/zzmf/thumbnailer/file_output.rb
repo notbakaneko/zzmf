@@ -14,8 +14,7 @@ module Zzmf
           Profiler.profile('Thumbnailer::FileOutput') do
             FileUtils.mkdir_p File.dirname(full_path)
 
-            thumbnailer = Thumbnails::FromFile.new(input: in_filename, **opts)
-            thumbnailer.create!(target: :file, filename: full_path.to_s, **create_opts)
+            new_thumbnailer.create!(target: :file, filename: full_path.to_s, **create_opts)
           end
         end
         serve_file(full_path.to_s)
@@ -30,11 +29,18 @@ module Zzmf
       def full_path
         @full_path ||= begin
                          if opts[:profile]
-                           Pathname.new(Application.config.thumbnails_root_path).join(opts[:profile], filename)
+                           File.join(Application.config.thumbnails_root_path, opts[:profile], opts_as_querystring, filename)
                          else
-                           Pathname.new(Application.config.thumbnails_root_path).join('default', filename)
+                           File.join(Application.config.thumbnails_root_path, 'default', opts_as_querystring, filename)
                          end
                        end
+      end
+
+      def opts_as_querystring
+        pairs = create_opts.merge(opts).map do |k, v|
+          "#{k}=#{v}"
+        end
+        pairs.join('&')
       end
     end
   end

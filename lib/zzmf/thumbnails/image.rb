@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require_relative 'vips'
+
 module Zzmf
   module Thumbnails
-    require_relative 'vips'
-
     class Base
       DEFAULT_SCALE = 1.5
 
@@ -19,9 +19,15 @@ module Zzmf
     end
 
     class FromFile < Base
+      def open_input(input, shrink: 1)
+        open_file(filename: input, shrink: shrink)
+      end
     end
 
     class FromBuffer < Base
+      def open_input(input, shrink: 1)
+        open_buffer(buffer: input, shrink: shrink)
+      end
     end
   end
 end

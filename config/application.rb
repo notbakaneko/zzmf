@@ -3,11 +3,15 @@
 module Application
   class Config
     def root_path
-      File.expand_path(ENV['ZZMV_SOURCES_PATH'] || 'sources')
+      File.expand_path(ENV['ZZMF_SOURCES_PATH'] || 'sources')
     end
 
     def thumbnails_root_path
-      File.expand_path(ENV['ZZMV_THUMBNAILS_PATH'] || 'thumbnails')
+      File.expand_path(ENV['ZZMF_THUMBNAILS_PATH'] || 'thumbnails')
+    end
+
+    def remote_origin
+      ENV['ZZMF_ORIGIN'] || 'http://localhost/'
     end
   end
 

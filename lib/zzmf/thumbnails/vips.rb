@@ -61,7 +61,7 @@ module Zzmf
       end
 
       def setup_pipeline(width:, height:, can_shrink: true)
-        image = open_file(filename: @input, shrink: 1)
+        image = open_input(@input, shrink: 1)
         size = size_cap(image, width, height)
 
         return image unless @upscale || ([image.width, image.height].max > size)
@@ -72,7 +72,7 @@ module Zzmf
 
         load_shrink = load_factor(shrink: shrink, scale: @scale)
         if load_shrink > 1 && can_shrink
-          image = open_file(filename: @input, shrink: load_shrink)
+          image = open_input(@input, shrink: load_shrink)
           # image = open_buffer(buffer: @in_stream, shrink: load_shrink)
           scale_d = [image.width, image.height].max
         end
