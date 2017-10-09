@@ -3,6 +3,7 @@
 require 'vips'
 require_relative '../config/icc'
 require_relative '../profiler'
+require_relative '../magic_number'
 
 module Zzmf
   module Thumbnails
@@ -112,7 +113,11 @@ module Zzmf
       end
 
       def open_buffer(buffer:, shrink: 1)
-        ::Vips::Image.new_from_buffer(buffer, '', shrink: shrink)
+        if Zzmf::MagicNumber.from_string(buffer[0..3]).mime_type == 'image/jpeg'
+          ::Vips::Image.new_from_buffer(buffer, '', shrink: shrink)
+        else
+          ::Vips::Image.new_from_buffer(buffer, '')
+        end
       end
 
       def open_file(filename:, shrink: 1)
