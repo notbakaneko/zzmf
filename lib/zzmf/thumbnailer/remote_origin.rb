@@ -28,7 +28,7 @@ module Zzmf
           path = path[1..-1] if path.start_with?('/')
           uri = URI.join(Application.config.remote_origin, path)
           res = Net::HTTP.get_response(uri)
-          res.body
+          res.is_a?(Net::HTTPSuccess) ? res.body : nil
         end
 
         def origin_data
