@@ -4,16 +4,19 @@
 require_relative 'config/application'
 
 # Pick pipeline options
+if ENV['ZZMF_SOURCE'] == 'remote'
+  require_relative 'lib/zzmf/thumbnailer/remote_origin'
+  require_relative 'lib/zzmf/loaders/buffer'
 
-require_relative 'lib/zzmf/thumbnailer/file_origin'
-OriginModule = Zzmf::Thumbnailer::FileOrigin
-# require_relative 'lib/zzmf/thumbnailer/remote_origin'
-# OriginModule = Zzmf::Thumbnailer::RemoteOrigin
+  OriginModule = Zzmf::Thumbnailer::RemoteOrigin
+  ThumbnailerLoader = Zzmf::Loaders::Buffer
+else
+  require_relative 'lib/zzmf/thumbnailer/file_origin'
+  require_relative 'lib/zzmf/loaders/file'
 
-require_relative 'lib/zzmf/loaders/file'
-ThumbnailerLoader = Zzmf::Loaders::File
-# require_relative 'lib/zzmf/loaders/buffer'
-# ThumbnailerLoader = Zzmf::Loaders::Buffer
+  OriginModule = Zzmf::Thumbnailer::FileOrigin
+  ThumbnailerLoader = Zzmf::Loaders::File
+end
 
 require_relative 'lib/zzmf/thumbnailer/buffer_output'
 OutputModule = Zzmf::Thumbnailer::BufferOutput
