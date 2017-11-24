@@ -13,6 +13,14 @@ module Application
     def remote_origin
       ENV['ZZMF_ORIGIN'] || 'http://localhost/'
     end
+
+    def origin
+      ENV['ZZMF_ORIGIN'] || 'http://localhost/'
+    end
+
+    def origin_type
+      remote_origin.start_with?('https://') || remote_origin.start_with?('http://') ? :remote : :file
+    end
   end
 
   def self.config
