@@ -4,7 +4,7 @@
 require_relative 'config/application'
 
 # Pick pipeline options
-if ENV['ZZMF_SOURCE'] == 'remote'
+if Application.config.origin_type == :remote
   require_relative 'lib/zzmf/thumbnailer/remote_origin'
   require_relative 'lib/zzmf/loaders/buffer'
 
