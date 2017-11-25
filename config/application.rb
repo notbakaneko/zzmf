@@ -3,7 +3,7 @@
 module Application
   class Config
     def root_path
-      File.expand_path(ENV['ZZMF_SOURCES_PATH'] || 'sources')
+      File.expand_path(ENV['ZZMF_ORIGIN'] || 'sources')
     end
 
     def thumbnails_root_path
